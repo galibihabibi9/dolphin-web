@@ -1,0 +1,148 @@
+---
+const isHomePage = Astro.url.pathname === '/';
+
+const categories = [
+  { icon: "🚗", name: "Car Parking Management", href: "/categories/car-parking" },
+  { icon: "🚪", name: "Digital Gate Systems", href: "/categories/digital-gate" },
+  { icon: "🍳", name: "Commercial Kitchen Equipment", href: "/categories/kitchen" },
+  { icon: "🍽️", name: "Restaurant Equipment", href: "/categories/restaurant" },
+  { icon: "🍦", name: "Ice Cream Business", href: "/categories/ice-cream" },
+  { icon: "🏪", name: "Supermarket Rack System", href: "/categories/rack-system" },
+  { icon: "🛒", name: "Supermarket Equipment", href: "/categories/equipment" },
+  { icon: "❄️", name: "Supermarket Refrigeration", href: "/categories/refrigeration" },
+  { icon: "🏭", name: "Cold Storage Solution", href: "/categories/cold-storage" },
+  { icon: "🔍", name: "Metal Detector Systems", href: "/categories/metal-detector" },
+];
+---
+
+<header class="bg-white shadow-md fixed w-full top-0 z-50">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center h-16">
+      <!-- Logo -->
+      <a href="/" class="shrink-0">
+        <img src="/logo.png" alt="Nobarun" class="h-10" />
+      </a>
+
+      <!-- Categories Button -->
+      <div class="relative ml-6">
+        <button 
+          class="flex items-center space-x-2 text-white bg-green-600 px-4 h-16 hover:bg-green-700"
+          id="categoriesBtn"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <span>Browse Categories</span>
+        </button>
+        
+        {isHomePage && (
+          <div class="fixed left-0 w-72 bg-white border-r border-gray-200 shadow-lg h-[calc(100vh-4rem)] overflow-y-auto top-16">
+            {categories.map(category => (
+              <a
+                href={category.href}
+                class="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-100"
+              >
+                <span class="text-xl">{category.icon}</span>
+                <span class="text-gray-700">{category.name}</span>
+              </a>
+            ))}
+            <a
+              href="/categories"
+              class="flex items-center justify-center py-3 text-primary hover:bg-gray-50 font-medium"
+            >
+              Load All Categories
+            </a>
+          </div>
+        )}
+      </div>
+
+      <!-- Navigation -->
+      <nav class="hidden md:flex items-center space-x-8 ml-8">
+        <a href="/" class="text-gray-700 hover:text-primary">Home</a>
+        <a href="/about" class="text-gray-700 hover:text-primary">About Us</a>
+        <a href="/clients" class="text-gray-700 hover:text-primary">Client List</a>
+        <a href="/blog" class="text-gray-700 hover:text-primary">Blogs</a>
+        <a href="/contact" class="text-gray-700 hover:text-primary">Contact Us</a>
+      </nav>
+
+      <!-- Search Button -->
+      <div class="ml-auto relative">
+        <button 
+          class="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary/90 flex items-center space-x-2"
+          id="searchBtn"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <span>Search</span>
+        </button>
+
+        <!-- Search Overlay -->
+        <div 
+          id="searchOverlay" 
+          class="fixed inset-0 bg-black/50 hidden"
+          style="backdrop-filter: blur(4px);"
+        >
+          <div class="container mx-auto px-4 pt-20">
+            <div class="bg-white rounded-lg shadow-xl p-6 max-w-3xl mx-auto">
+              <div class="flex items-center">
+                <input
+                  type="text"
+                  placeholder="Find Our All Products"
+                  class="w-full px-4 py-3 text-lg border border-gray-300 rounded-l-lg focus:outline-none focus:border-primary"
+                />
+                <button class="bg-primary text-white px-8 py-3 rounded-r-lg hover:bg-primary/90">
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button 
+        class="ml-4 md:hidden"
+        hx-get="/api/menu"
+        hx-trigger="click"
+        hx-target="#mobile-menu"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  <div id="mobile-menu" class="md:hidden"></div>
+</header>
+
+<script>
+  // Search functionality
+  const searchBtn = document.getElementById('searchBtn');
+  const searchOverlay = document.getElementById('searchOverlay');
+
+  searchBtn?.addEventListener('click', () => {
+    searchOverlay?.classList.remove('hidden');
+  });
+
+  searchOverlay?.addEventListener('click', (e) => {
+    if (e.target === searchOverlay) {
+      searchOverlay.classList.add('hidden');
+    }
+  });
+
+  // Close search on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      searchOverlay?.classList.add('hidden');
+    }
+  });
+</script>
+
+<style>
+  /* Ensure the categories menu doesn't overlap with the hero section */
+  .fixed {
+    position: fixed;
+  }
+</style>
